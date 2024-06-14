@@ -16,16 +16,16 @@ import FourWheelers from '../Screens/FourWheelers';
 import ElectronicItems from '../Screens/ElectronicItems';
 import ProductMaster from '../Screens/ProductMaster';
 
-
+0
 const Stack = createNativeStackNavigator();
 
 const Navigation=()=> {
   return (
     <NavigationContainer>
-    <Stack.Navigator>     
+    <Stack.Navigator>   
+      <Stack.Screen name='Login' component={LoginScreen} options={{headerShown:false}} />  
       <Stack.Screen name='Customer' component={CustomerScreen} options={{headerShown:false}} />
       <Stack.Screen name='Two' component={TwoWheelers} options={{headerShown:false}}/>
-      <Stack.Screen name='Login' component={LoginScreen} options={{headerShown:false}} />
       <Stack.Screen name='HomeA' component={HomeAcces} options={{headerShown:false}}/>
       <Stack.Screen name='Home' component={HomeScreen} options={{headerShown: false}}/>
       <Stack.Screen name='Order' component={OrderEntry} options={{headerShown:false}}/>

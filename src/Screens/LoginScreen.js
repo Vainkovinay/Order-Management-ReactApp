@@ -1,110 +1,90 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import LottieView from 'lottie-react-native';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image,Alert} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { TextInput, Checkbox } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import axios from 'axios';
 
-const LoginScreen=({navigation})=> {
-  const [username, setUsername] = useState(null);
-  const [errors, setErrors] = useState({});
-  const [checked,setChecked] = useState(false);
-  const [password, setPassword] = useState(''); 
-  const [showPassword, setShowPassword] = useState(false); 
-  const [isFormValid, setisFormValid] = useState(false);
+const LoginScreen = ({ navigation }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [checked, setChecked] = useState(false);
   const [loginClicked, setLoginClicked] = useState(false);
-  const toggleShowPassword = () => { 
-    setShowPassword(!showPassword); 
-  }; 
 
-  useEffect(()=>{
-    validateForm();
-  },[username,password]);
-  
-  const validateForm =() =>{
-    let errors ={};
-
-    if (!username) {
-      errors.username = 'Username is required';
-    }
-
-    if(!password){
-      errors.password='Password is required.';
-    } else if (password.length < 6) {
-      errors.password= 'Password must be atleast 6 characters long';
-    }
-
-    setErrors(errors);
-    setisFormValid(Object.keys(errors).length===0);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
-  const handleRegister = () => {
-    validateForm();
+  const handleLogin = async () => {
     setLoginClicked(true);
-    if (isFormValid) {
-      navigation.navigate('Home');
+
+    try {
+      const response = await axios.post('http://134.209.155.122:8084/api/v1/auth', {
+        username,
+        password,
+      });
+
+      if (response.status === 200) {
+        // Assuming the backend sends a token or success message
+        navigation.navigate('Home'); // Navigate to the Home screen on successful login
+      } else {
+        // Handle non-200 responses
+        Alert.alert('Login failed', response.data.message);
+      }
+    } catch (error) {
+      // Handle errors
+      Alert.alert('Login error', error.response?.data?.message || 'Something went wrong');
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
-        
         <Text style={styles.heading}>Order Management</Text>
 
-        {/* <Image 
-          style={styles.image} 
-          source={require('D:/VINAY SHRIMALI/Replica-app/assets/TechnosysI.png')}>
-        </Image> */}
-        <View style={{height:200}}>
-          <LottieView 
+        <View style={{ height: 200 }}>
+          <LottieView
             style={styles.animate}
-            source={require('D:/VINAY SHRIMALI/OrderManagement-app/assets/Animation2.json')} 
-            autoPlay loop 
-            />
+            source={require('D:/VINAY SHRIMALI/OrderManagement-app/assets/Animation2.json')}
+            autoPlay
+            loop
+          />
         </View>
-        
+
         <View style={styles.usernameContainer}>
           <TextInput
             style={styles.inputText}
-            mode= 'outlined'
-            label='User Name'
-            onChangeText={(text)=> setUsername(text)}
-          ></TextInput>
-          {loginClicked && errors.username && (
-            <Text style={styles.error}>{errors.username}</Text>
-          )}
+            mode="outlined"
+            label="User Name"
+            onChangeText={(text) => setUsername(text)}
+          />
         </View>
 
         <View style={styles.passwordContainer}>
           <TextInput
-            mode='outlined'
-            secureTextEntry={!showPassword} 
-            value={password} 
-            onChangeText={(text)=>setPassword(text)} 
-            style={styles.passwordInput} 
+            mode="outlined"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            style={styles.passwordInput}
             label="Password"
           />
           <TouchableOpacity style={styles.iconContainer} onPress={toggleShowPassword}>
-            <MaterialCommunityIcons 
-              name={showPassword ? 'eye-off' : 'eye'} 
-              size={24} 
-              style={styles.icon} 
-            /> 
+            <MaterialCommunityIcons
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={24}
+              style={styles.icon}
+            />
           </TouchableOpacity>
         </View>
-        <View style={styles.usernameContainer}>
-          {loginClicked && errors.password && (
-            <Text style={styles.error}>{errors.password}</Text>
-          )}
-        </View>
-        
       </View>
-      
+
       <View style={styles.rememberContainer}>
         <Text style={styles.bottomtext}>Remember me</Text>
-        
-        <Checkbox 
+
+        <Checkbox
           style={styles.checkboxs}
           status={checked ? 'checked' : 'unchecked'}
           onPress={() => {
@@ -112,35 +92,29 @@ const LoginScreen=({navigation})=> {
           }}
         />
       </View>
-      
+
       <View style={styles.thirdview}>
-        <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.buttons}>Login</Text>
         </TouchableOpacity>
       </View>
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     backgroundColor: 'white',
   },
-  error:{
-    color: 'red',
-    fontSize: 13,
-    paddingBottom: 10,
-  },
-  animate:{
+  animate: {
     flex: 1,
     height: 180,
     width: 180,
     marginBottom: 20,
   },
-  wrapper:{
-    alignContent:'center',
+  wrapper: {
+    alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -161,7 +135,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 10,
-    marginLeft: 35, 
+    marginLeft: 35,
     marginRight: 30,
   },
   passwordInput: {
@@ -174,7 +148,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     alignItems: 'center',
   },
-  thirdview:{
+  thirdview: {
     justifyContent: 'center',
   },
   inputText: {
@@ -183,12 +157,12 @@ const styles = StyleSheet.create({
     activeOutlineColor: 'black',
     marginBottom: 10,
   },
-  icon: { 
+  icon: {
     color: 'black',
     paddingTop: 20,
-  }, 
-  heading:{
-    fontWeight:'bold',
+  },
+  heading: {
+    fontWeight: 'bold',
     paddingTop: 20,
     fontSize: 21,
     textAlign: 'center',
@@ -196,12 +170,12 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
     color: 'black',
   },
-  bottomtext:{
+  bottomtext: {
     fontSize: 16,
     fontWeight: 'bold',
   },
-  checkboxs:{
-    alignItems:'flex-end',
+  checkboxs: {
+    alignItems: 'flex-end',
     backgroundColor: 'black',
   },
   loginButton: {
@@ -214,11 +188,11 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 40,
   },
-  buttons:{
+  buttons: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
   },
-})
+});
 
 export default LoginScreen;

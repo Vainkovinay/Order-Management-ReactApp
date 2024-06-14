@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Pressable, Alert, Button } from 'react-native';
 import { Appbar, Avatar, Card, IconButton, Surface, FAB, Portal, PaperProvider} from 'react-native-paper';
 import Icon from 'react-native-ico-material-design';
 
@@ -8,6 +8,18 @@ const HomeScreen=({navigation})=> {
   const [state, setState] = React.useState({ open: false });
   const onStateChange = ({ open }) => setState({ open });
   const { open } = state;
+  const [modelvisible, setModalVisible] = React.useState(false);
+  const handleShowAlert =()=>{
+      setModalVisible(true);
+    };
+  const handleyes =()=>{
+    navigation.navigate('Login');
+    setModalVisible(false);
+  }
+  const handleno =()=>{
+    navigation.navigate('Home')
+    setModalVisible(false);
+  };
 
   return (
     
@@ -17,7 +29,8 @@ const HomeScreen=({navigation})=> {
         
         <Appbar.Header style={styles.appbarHeader}>
           
-          <Appbar.BackAction onPress={()=>navigation.navigate('Login')}/>
+          <Appbar.BackAction onPress={handleShowAlert}/>
+          
           <Appbar.Content 
             title="Order Management" 
             style={{fontSize: 10}}/>
@@ -26,6 +39,18 @@ const HomeScreen=({navigation})=> {
         </Appbar.Header>
       
       </View>
+
+      {modelvisible && (
+          Alert.alert(
+          'Confirmation',
+          'Do you want to logout?',
+          [
+            { text: 'Yes', onPress: handleyes },
+            { text: 'No', onPress: handleno },
+          ],
+          { cancelable: false }
+        )
+      )}
       
       <View style={styles.fistcontainer} elevation={4}>
         
